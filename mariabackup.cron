@@ -1,0 +1,98 @@
+#!/bin/bash
+#
+# Script to run mariabackup on regular basis from cron.hourly
+#
+# Assumptions: 
+# - username and password is available in
+#   /etc/my.cnf.d/mariabackup.cnf ... putting it on the command line
+#   is worse for security than putting it in a file owned and readable
+#   only by the root user.
+# Version:
+#    1.0.0
+# Source:
+#    https://github.com/ferthalangur/maria_db_backup
+# License: 
+#    GPL v.3 - See bottom of file.
+###########################################################################
+
+if [ -r /etc/default/mariabackup ]
+then
+    source /etc/default/mariabackup
+fi
+
+# Defaults, if not set by the defaults file:
+MARIABACKUP_HOUR="${MARIABACKUP_HOUR:-06 12 18}"
+MARIABACKUP_PROG="${MARIABACKUP_PROG:-/bin/mariabackup}"
+MARIABACKUP_OPTIONS="${MARIABACKUP_OPTIONS:---binloginfo=AUTO}"
+MARIABACKUP_DEBUG="${MARIABACKUP_DEBUG:-0}"
+MARIABACKUP_BASEDIR="${MARIABACKUP_BASEDIR:-/usr/local/backup/mariabackup}"
+
+function run_backup ()
+{
+    local targetdir="$1"
+    local backup_cmd
+
+    backup_cmd="${MARIABACKUP_PROG} --backup --target-dir ${targetdir} ${MARIABACKUP_OPTIONS}"
+
+    mkdir -p "${targetdir}"
+
+    if [ "${MARIABACKUP_DEBUG}" -eq "1" ]
+    then
+	debug_dump "${backup_cmd}"
+    fi
+    
+    ${backup_cmd}
+
+    return 0
+}
+
+function debug_dump ()
+{
+    local command="$1"
+    echo "DEBUG: Environment variables: "
+    set | egrep '^MARIABACKUP'
+    echo "DEBUG: Command to be run: ${command}"
+}
+
+if [ ! -x "${MARIABACKUP_PROG}" ]
+then
+    echo "Error: unable to execute ${MARIABACKUP_PROG}"
+    exit 1
+fi
+
+if [ ! -d "${MARIABACKUP_BASEDIR}" ]
+then
+    echo "Error: directory ${MARIABACKUP_BASEDIR}"
+    exit 1
+fi
+
+datestamp=$(date "+%Y%m%d")
+timestamp=$(date "+%H%M%S")
+current_hour=$(date "+%H")
+backup_dir="${MARIABACKUP_BASEDIR}/${datestamp}/${timestamp}"
+
+for hour in ${MARIABACKUP_HOUR}
+do
+    if [ "${hour}" -eq "${current_hour}" ]
+    then
+	run_backup "${backup_dir}"
+	exit
+    fi
+done
+exit
+###########################################################################
+#   Copyright (C) 2018 Robert Bryan Jenson ... rbj.(at).spotch.com
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+###########################################################################

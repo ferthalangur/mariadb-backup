@@ -1,0 +1,23 @@
+#
+# Defaults file for mariabackup hourly cron script
+#
+# Space-separated list of 2-digit hours to run backup
+# - Every hour from 6 AM to 8 PM
+# MARIABACKUP_HOUR="06 07 08 09 10 11 12 13 14 15 16 17 18 19 20"
+# - Daily at 2 AM
+# MARIABACKUP_HOUR="02"
+# - Backup at 6AM, noon and 6 PM (Default)
+# MARIABACKUP_HOUR="06 12 18"
+# 
+# Location of executable program
+# MARIABACKUP_PROG="/bin/mariabackup"
+#
+# Base directory where to put the backups
+# MARIABACKUP_BASEDIR="/usr/local/backup/mariabackup"
+#
+# Options to append to --backup command
+# MARIABACKUP_OPTIONS : all options to run with
+# See https://mariadb.com/kb/en/library/mariabackup-options/
+# MARIABACKUP_OPTIONS="--binloginfo=AUTO"
+# Set to "1" if you want verbose debugging messages 
+# MARIABACKUP_DEBUG="0"

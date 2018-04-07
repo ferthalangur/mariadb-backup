@@ -1,0 +1,3 @@
+[xtrabackup]
+user     = maria_db_backup
+password = some-long-random-password
