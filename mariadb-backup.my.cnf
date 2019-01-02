@@ -1,3 +1,3 @@
 [xtrabackup]
-user     = maria_db_backup
+user     = mariadb_backup
 password = some-long-random-password

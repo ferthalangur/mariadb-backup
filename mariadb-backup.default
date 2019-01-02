@@ -1,0 +1,38 @@
+#
+# Defaults file for mariabackup hourly cron script
+# ==============================================================
+# Space-separated list of 2-digit hours when to backup
+#    the databases:
+# Example - Every hour from 6 AM to 8 PM
+# MADBB_HOURS="06 07 08 09 10 11 12 13 14 15 16 17 18 19 20"
+#
+# Example - Daily at 2 AM
+# MADBB_HOURS="02"
+#
+# Default - Backup at 6AM, noon and 6 PM
+# MADBB_HOURS="06 12 18"
+# ==============================================================
+# Location of executable program
+# MADBB_PROG="/bin/mariabackup"
+# ==============================================================
+# Directory where the backups will be written
+# MADBB_BACKUP_DIR="/usr/local/backup/mariabackup"
+# ==============================================================
+# Options to pass to the mariabackup command other than --backup
+# # See https://mariadb.com/kb/en/library/mariabackup-options/
+# MADBB_OPTIONS="--binloginfo=AUTO"
+# ==============================================================
+# Pruning old backups
+#
+# Set to "0" if you do not want to prune old backups
+# MADBB_PRUNE_DAILY="1"
+# ==============================================================
+# What hour to run the prune algorithm
+# MADBB_PRUNE_HOUR="18"
+# ==============================================================
+# How many DAYS of backups to keep?
+# MADBB_SAVE_DAYS="10"
+# ==============================================================
+# Set to "1" if you want verbose debugging messages 
+# MADBB_DEBUG="0"
+# ==============================================================

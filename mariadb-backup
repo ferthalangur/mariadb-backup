@@ -8,35 +8,43 @@
 #   is worse for security than putting it in a file owned and readable
 #   only by the root user.
 # Version:
-#    1.0.0
+#    1.0.1
 # Source:
 #    https://github.com/ferthalangur/maria_db_backup
 # License: 
 #    GPL v.3 - See bottom of file.
 ###########################################################################
 
-if [ -r /etc/default/mariabackup ]
+MADBB_CONFIG_FILE="/etc/default/mariadb-backup"
+
+if [ -r "${MADBB_CONFIG_FILE}" ]
 then
-    source /etc/default/mariabackup
+    source "${MADBB_CONFIG_FILE}"
 fi
 
 # Defaults, if not set by the defaults file:
-MARIABACKUP_HOUR="${MARIABACKUP_HOUR:-06 12 18}"
-MARIABACKUP_PROG="${MARIABACKUP_PROG:-/bin/mariabackup}"
-MARIABACKUP_OPTIONS="${MARIABACKUP_OPTIONS:---binloginfo=AUTO}"
-MARIABACKUP_DEBUG="${MARIABACKUP_DEBUG:-0}"
-MARIABACKUP_BASEDIR="${MARIABACKUP_BASEDIR:-/usr/local/backup/mariabackup}"
+MADBB_HOURS="${MADBB_HOURS:-06 12 18}"
+MADBB_PROG="${MADBB_PROG:-/bin/mariabackup}"
+MADBB_OPTIONS="${MADBB_OPTIONS:---binloginfo=AUTO}"
+MADBB_BACKUP_DIR="${MADBB_BACKUP_DIR:-/usr/local/backup/mariabackup}"
+MADBB_PRUNE_DAILY="${MADBB_PRUNE_DAILY:-1}"
+MADBB_PRUNE_HOUR="${MADBB_PRUNE_HOUR:-18}"
+MADBB_SAVE_DAYS="${MADBB_SAVE_DAYS:-10}"
+MADBB_DEBUG="${MADBB_DEBUG:-0}"
 
+#
+# Runs mariabackup - parameter passed is the directory where the output should go.
+# 
 function run_backup ()
 {
     local targetdir="$1"
     local backup_cmd
 
-    backup_cmd="${MARIABACKUP_PROG} --backup --target-dir ${targetdir} ${MARIABACKUP_OPTIONS}"
+    backup_cmd="${MADBB_PROG} --backup --target-dir ${targetdir} ${MADBB_OPTIONS}"
 
     mkdir -p "${targetdir}"
 
-    if [ "${MARIABACKUP_DEBUG}" -eq "1" ]
+    if [ "${MADBB_DEBUG}" -eq "1" ]
     then
 	debug_dump "${backup_cmd}"
     fi
@@ -46,6 +54,31 @@ function run_backup ()
     return 0
 }
 
+# Prune backup directories.
+# Parameters:
+#     $1 - days_to_keep : How many days should be saved
+#     $2 - directory : Directory that contains the backups
+#
+function prune_backups ()
+{
+    local days_to_keep="$1"
+    local directory="$2"
+    local backup_count
+
+    if [ ${days_to_keep} -le 0 ]; then return; fi
+    
+    pushd "${directory}"
+    backup_count="$(ls | wc -l)"
+    if [ ${backup_count} -gt ${days_to_keep} ]; then
+	ls | head -n-${days_to_keep} | xargs -n1 -I'{}' rm -rf '{}'
+    fi
+    popd
+}
+
+#
+# Dumps the command about to be run and the
+# environment current values
+#
 function debug_dump ()
 {
     local command="$1"
@@ -54,32 +87,37 @@ function debug_dump ()
     echo "DEBUG: Command to be run: ${command}"
 }
 
-if [ ! -x "${MARIABACKUP_PROG}" ]
+if [ ! -x "${MADBB_PROG}" ]
 then
-    echo "Error: unable to execute ${MARIABACKUP_PROG}"
+    echo "Error: unable to execute ${MADBB_PROG}"
     exit 1
 fi
 
-if [ ! -d "${MARIABACKUP_BASEDIR}" ]
+if [ ! -d "${MADBB_BACKUP_DIR}" ]
 then
-    echo "Error: directory ${MARIABACKUP_BASEDIR}"
+    echo "Error: directory ${MADBB_BACKUP_DIR}"
     exit 1
 fi
 
 datestamp=$(date "+%Y%m%d")
 timestamp=$(date "+%H%M%S")
 current_hour=$(date "+%H")
-backup_dir="${MARIABACKUP_BASEDIR}/${datestamp}/${timestamp}"
+backup_dir="${MADBB_BACKUP_DIR}/${datestamp}/${timestamp}"
 
-for hour in ${MARIABACKUP_HOUR}
+for hour in ${MADBB_HOURS}
 do
     if [ "${hour}" -eq "${current_hour}" ]
     then
 	run_backup "${backup_dir}"
-	exit
     fi
 done
-exit
+
+# Prune old backups once daily
+if [ "${current_hour}" -eq "${MADBB_PRUNE_HOUR}" ]
+then
+    prune_backups "${MADBB_SAVE_DAYS}" "${MADBB_BACKUP_DIR}"
+fi
+
 ###########################################################################
 #   Copyright (C) 2018 Robert Bryan Jenson ... rbj.(at).spotch.com
 #
