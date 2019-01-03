@@ -16,7 +16,7 @@
 # MADBB_PROG="/bin/mariabackup"
 # ==============================================================
 # Directory where the backups will be written
-# MADBB_BACKUP_DIR="/usr/local/backup/mariabackup"
+# MADBB_BACKUP_DIR="/usr/local/backup/mariadb-backup"
 # ==============================================================
 # Options to pass to the mariabackup command other than --backup
 # # See https://mariadb.com/kb/en/library/mariabackup-options/

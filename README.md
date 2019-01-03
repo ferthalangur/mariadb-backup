@@ -24,7 +24,7 @@ running the script or it will fail. I use
 */usr/local/backup/mariadb-backup/* as my base directory but you can
 change that in the configuration file.
 
-To follow or copy/past my examples, set the environment variable
+To follow or copy/paste my examples, set the environment variable
 $EDITOR to your favorite editor (e.g., export EDITOR='emacs -nw')
 
 
@@ -134,9 +134,9 @@ Report issues on the issues tracker on GitHub, or email me : rbj(atsymbol)spotch
 
 ## Release History ##
 v1.0.1 - 2019-01-01
-    * Added pruning of old backups.
-    * Renamed the program and repository to mariadb-backup
-    * Shortened the configuration variable prefix to MADBB_
+* Added pruning of old backups.
+* Renamed the program and repository to mariadb-backup
+* Shortened the configuration variable prefix to MADBB_
 
 v1.0.0 - 2018-04-06. Initial release.
 

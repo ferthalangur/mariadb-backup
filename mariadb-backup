@@ -26,7 +26,7 @@ fi
 MADBB_HOURS="${MADBB_HOURS:-06 12 18}"
 MADBB_PROG="${MADBB_PROG:-/bin/mariabackup}"
 MADBB_OPTIONS="${MADBB_OPTIONS:---binloginfo=AUTO}"
-MADBB_BACKUP_DIR="${MADBB_BACKUP_DIR:-/usr/local/backup/mariabackup}"
+MADBB_BACKUP_DIR="${MADBB_BACKUP_DIR:-/usr/local/backup/mariadb-backup}"
 MADBB_PRUNE_DAILY="${MADBB_PRUNE_DAILY:-1}"
 MADBB_PRUNE_HOUR="${MADBB_PRUNE_HOUR:-18}"
 MADBB_SAVE_DAYS="${MADBB_SAVE_DAYS:-10}"
@@ -83,7 +83,7 @@ function debug_dump ()
 {
     local command="$1"
     echo "DEBUG: Environment variables: "
-    set | egrep '^MARIABACKUP'
+    set | egrep '^MADBB'
     echo "DEBUG: Command to be run: ${command}"
 }
 
