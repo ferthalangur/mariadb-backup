@@ -7,13 +7,13 @@
 # - Daily at 2 AM
 # MARIABACKUP_HOUR="02"
 # - Backup at 6AM, noon and 6 PM (Default)
-MARIABACKUP_HOUR="06 12 18"
-#
+# MARIABACKUP_HOUR="06 12 18"
+# 
 # Location of executable program
-MARIABACKUP_PROG="/bin/mariabackup"
+# MARIABACKUP_PROG="/bin/mariabackup"
 #
 # Base directory where to put the backups
-MARIABACKUP_BASEDIR="/usr/local/backup/mariabackup"
+# MARIABACKUP_BASEDIR="/usr/local/backup/mariabackup"
 #
 # Clean up old backups
 # MARIABACKUP_CLEAN="0"
@@ -37,5 +37,5 @@ MARIABACKUP_BASEDIR="/usr/local/backup/mariabackup"
 # MARIABACKUP_OPTIONS : all options to run with
 # See https://mariadb.com/kb/en/library/mariabackup-options/
 # MARIABACKUP_OPTIONS="--binloginfo=AUTO"
-# Set to "1" if you want verbose debugging messages
-MARIABACKUP_DEBUG="1"
+# Set to "1" if you want verbose debugging messages 
+# MARIABACKUP_DEBUG="0"
