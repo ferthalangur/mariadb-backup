@@ -37,6 +37,7 @@ function run_backup ()
 {
     local targetdir="$1"
     local backup_cmd
+    local filename="backup_database_${datestamp}_${timestamp}"
 
     backup_cmd="${MARIABACKUP_PROG} --backup --target-dir ${targetdir} ${MARIABACKUP_OPTIONS}"
 
@@ -46,25 +47,19 @@ function run_backup ()
     fi
 
     case "$MARIABACKUP_COMPRESSION" in
-        "gzip") backup_cmd="${backup_cmd} | gzip > ${MARIABACKUP_BASEDIR}/backup_database_${datestamp}_${timestamp}.gz"
+        "gzip")
+        filename="${filename}.gz"
+        backup_cmd="${backup_cmd} | gzip > ${MARIABACKUP_BASEDIR}/${filename}"
         ;;
-        "bzip2") backup_cmd="${backup_cmd} | bzip2 > ${MARIABACKUP_BASEDIR}/backup_database_${datestamp}_${timestamp}.tar.bz2"
+        "bzip2")
+        filename="${filename}.bz2"
+        backup_cmd="${backup_cmd} | bzip2 > ${MARIABACKUP_BASEDIR}/${filename}"
         ;;
     esac
 
     if [ "${MARIABACKUP_STORE_SSH}" -eq "1" ]
     then
-        if [ "${MARIABACKUP_COMPRESSION}" -eq "0" ]
-        then
-            backup_cmd="${backup_cmd} | ssh ${MARIABACKUP_STORE_SSH_USER}@${MARIABACKUP_STORE_SSH_HOST} -i ${MARIABACKUP_STORE_SSH_KEY} 'cat - > ${MARIABACKUP_STORE_SSH_BASEDIR}/backup_database_${datestamp}_${timestamp}'"
-        else
-            case "$MARIABACKUP_COMPRESSION" in
-                "gzip") backup_cmd="${backup_cmd} | ssh ${MARIABACKUP_STORE_SSH_USER}@${MARIABACKUP_STORE_SSH_HOST} -i ${MARIABACKUP_STORE_SSH_KEY} 'cat - > ${MARIABACKUP_STORE_SSH_BASEDIR}/backup_database_${datestamp}_${timestamp}.gz'"
-                ;;
-                "bzip2") backup_cmd="${backup_cmd} | ssh ${MARIABACKUP_STORE_SSH_USER}@${MARIABACKUP_STORE_SSH_HOST} -i ${MARIABACKUP_STORE_SSH_KEY} 'cat - > ${MARIABACKUP_STORE_SSH_BASEDIR}/backup_database_${datestamp}_${timestamp}.tar.bz2'"
-                ;;
-            esac
-        fi
+        backup_cmd="${backup_cmd} | ssh ${MARIABACKUP_STORE_SSH_USER}@${MARIABACKUP_STORE_SSH_HOST} -i ${MARIABACKUP_STORE_SSH_KEY} 'cat - > ${MARIABACKUP_STORE_SSH_BASEDIR}/${filename}'"
     fi
 
     mkdir -p "${targetdir}"
