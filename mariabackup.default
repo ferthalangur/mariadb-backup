@@ -15,6 +15,11 @@ MARIABACKUP_PROG="/bin/mariabackup"
 # Base directory where to put the backups
 MARIABACKUP_BASEDIR="/backups/databases"
 #
+# Clean up old backups
+# MARIABACKUP_CLEAN="0"
+# Specify the number of days old backup limit (example for 90 days)
+# MARIABACKUP_CLEAN_DAYS="90"
+#
 # Compression method (gzip|bzip2|7z)
 # to uncompress file use command 'gunzip -c backupstream.gz | mbstream -x' or 
 # MARIABACKUP_COMPRESSION="0"
