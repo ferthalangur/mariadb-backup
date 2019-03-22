@@ -31,6 +31,7 @@ MARIABACKUP_STORE_SSH="${MARIABACKUP_STORE_SSH:-0}"
 MARIABACKUP_STORE_SSH_BASEDIR="${MARIABACKUP_STORE_SSH_BASEDIR:-/usr/local/backup/mariabackup}"
 MARIABACKUP_STORE_SSH_HOST="${MARIABACKUP_STORE_SSH_HOST:-127.0.0.1}"
 MARIABACKUP_STORE_SSH_USER="${MARIABACKUP_STORE_SSH_USER:-root}"
+MARIABACKUP_STORE_SSH_KEY="${MARIABACKUP_STORE_SSH_KEY:-/root/id_rsa}"
 
 function run_backup ()
 {
@@ -53,7 +54,7 @@ function run_backup ()
 
     if [ "${MARIABACKUP_STORE_SSH}" -eq "1" ]
     then
-        backup_cmd="${backup_cmd} | ssh ${MARIABACKUP_STORE_SSH_USER}@${MARIABACKUP_STORE_SSH_HOST} 'xbstream -x -C ${MARIABACKUP_STORE_SSH_BASEDIR}'"
+        backup_cmd="${backup_cmd} | ssh ${MARIABACKUP_STORE_SSH_USER}@${MARIABACKUP_STORE_SSH_HOST} -i ${MARIABACKUP_STORE_SSH_KEY} 'xbstream -x -C ${MARIABACKUP_STORE_SSH_BASEDIR}'"
     fi
 
     mkdir -p "${targetdir}"

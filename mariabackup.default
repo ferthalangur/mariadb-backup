@@ -23,6 +23,7 @@ MARIABACKUP_BASEDIR="/backups/databases"
 # MARIABACKUP_STORE_SSH="0"
 # MARIABACKUP_STORE_SSH_HOST="127.0.0.1"
 # MARIABACKUP_STORE_SSH_USER="root"
+# MARIABACKUP_STORE_SSH_KEY="/root/id_rsa"
 #
 # Remote base directory where to put the backups if SSH store mode active
 # MARIABACKUP_STORE_SSH_BASEDIR="/usr/local/backup/mariabackup"
