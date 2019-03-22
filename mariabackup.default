@@ -8,7 +8,7 @@
 # MARIABACKUP_HOUR="02"
 # - Backup at 6AM, noon and 6 PM (Default)
 # MARIABACKUP_HOUR="06 12 18"
-#
+# 
 # Location of executable program
 # MARIABACKUP_PROG="/bin/mariabackup"
 #
@@ -38,5 +38,5 @@
 # MARIABACKUP_OPTIONS : all options to run with
 # See https://mariadb.com/kb/en/library/mariabackup-options/
 # MARIABACKUP_OPTIONS="--binloginfo=AUTO"
-# Set to "1" if you want verbose debugging messages
+# Set to "1" if you want verbose debugging messages 
 # MARIABACKUP_DEBUG="0"
