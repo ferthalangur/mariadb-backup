@@ -55,43 +55,33 @@ function run_backup ()
     local targetdir="$1"
     local backup_cmd
     local filename="backup_database_${datestamp}_${timestamp}"
+    local ssh_cmd="ssh ${MARIABACKUP_STORE_SSH_USER}@${MARIABACKUP_STORE_SSH_HOST} cat - > ${MARIABACKUP_STORE_SSH_BASEDIR}/${filename}"
 
     backup_cmd="${MARIABACKUP_PROG} --backup --target-dir ${targetdir} ${MARIABACKUP_OPTIONS}"
-
-    if [ "${MARIABACKUP_STORE_SSH}" -eq "1" -o "${MARIABACKUP_COMPRESSION}" != "0" ]
-    then
-        backup_cmd="${backup_cmd} --stream=xbstream"
-    fi
 
     if [ "${MARIABACKUP_STORE_SSH}" -eq "1" ]
     then
         case "$MARIABACKUP_COMPRESSION" in
             "gzip")
-            filename="${filename}.gz"
-            backup_cmd="${backup_cmd} | gzip | ssh ${MARIABACKUP_STORE_SSH_USER}@${MARIABACKUP_STORE_SSH_HOST} 'cat - > ${MARIABACKUP_STORE_SSH_BASEDIR}/${filename}'"
+            backup_cmd="${backup_cmd} --stream=xbstream | gzip | ${ssh_cmd}.gz"
             ;;
             "bzip2")
-            filename="${filename}.bz2"
-            backup_cmd="${backup_cmd} | bzip2 | ssh ${MARIABACKUP_STORE_SSH_USER}@${MARIABACKUP_STORE_SSH_HOST} 'cat - > ${MARIABACKUP_STORE_SSH_BASEDIR}/${filename}'"
+            backup_cmd="${backup_cmd} --stream=xbstream | bzip2 | ${ssh_cmd}.bz2"
             ;;
             "7z")
-            filename="${filename}.7z"
-            backup_cmd="${backup_cmd} | 7z a -si | ssh ${MARIABACKUP_STORE_SSH_USER}@${MARIABACKUP_STORE_SSH_HOST} 'cat - > ${MARIABACKUP_STORE_SSH_BASEDIR}/${filename}'"
+            backup_cmd="${backup_cmd} --stream=xbstream | 7z a -si | ${ssh_cmd}.7z"
             ;;
         esac
     else
         case "$MARIABACKUP_COMPRESSION" in
             "gzip")
-            filename="${filename}.gz"
-            backup_cmd="${backup_cmd} | gzip > ${MARIABACKUP_BASEDIR}/${filename}"
+            backup_cmd="${backup_cmd} --stream=xbstream | gzip > ${MARIABACKUP_BASEDIR}/${filename}.gz"
             ;;
             "bzip2")
-            filename="${filename}.bz2"
-            backup_cmd="${backup_cmd} | bzip2 > ${MARIABACKUP_BASEDIR}/${filename}"
+            backup_cmd="${backup_cmd} --stream=xbstream | bzip2 > ${MARIABACKUP_BASEDIR}/${filename}.bz2"
             ;;
             "7z")
-            filename="${filename}.7z"
-            backup_cmd="${backup_cmd} | 7z a -si ${MARIABACKUP_BASEDIR}/${filename}"
+            backup_cmd="${backup_cmd} --stream=xbstream | 7z a -si ${MARIABACKUP_BASEDIR}/${filename}.7z"
             ;;
         esac
     fi
