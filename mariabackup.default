@@ -7,17 +7,29 @@
 # - Daily at 2 AM
 # MARIABACKUP_HOUR="02"
 # - Backup at 6AM, noon and 6 PM (Default)
-# MARIABACKUP_HOUR="06 12 18"
-# 
+MARIABACKUP_HOUR="06 12 18"
+#
 # Location of executable program
-# MARIABACKUP_PROG="/bin/mariabackup"
+MARIABACKUP_PROG="/bin/mariabackup"
 #
 # Base directory where to put the backups
-# MARIABACKUP_BASEDIR="/usr/local/backup/mariabackup"
+MARIABACKUP_BASEDIR="/backups/databases"
+#
+# Compression method (gzip|bzip2)
+# MARIABACKUP_COMPRESSION="0"
+#
+# SSH store mode : to send backup into remote server
+# This option requires ssh-key to be set to avoid ssh asking for password
+# MARIABACKUP_STORE_SSH="0"
+# MARIABACKUP_STORE_SSH_HOST="127.0.0.1"
+# MARIABACKUP_STORE_SSH_USER="root"
+#
+# Remote base directory where to put the backups if SSH store mode active
+# MARIABACKUP_STORE_SSH_BASEDIR="/usr/local/backup/mariabackup"
 #
 # Options to append to --backup command
 # MARIABACKUP_OPTIONS : all options to run with
 # See https://mariadb.com/kb/en/library/mariabackup-options/
 # MARIABACKUP_OPTIONS="--binloginfo=AUTO"
-# Set to "1" if you want verbose debugging messages 
-# MARIABACKUP_DEBUG="0"
+# Set to "1" if you want verbose debugging messages
+MARIABACKUP_DEBUG="1"

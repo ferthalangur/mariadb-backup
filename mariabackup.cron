@@ -8,7 +8,7 @@
 #   is worse for security than putting it in a file owned and readable
 #   only by the root user.
 # Version:
-#    1.0.0
+#    1.1.0
 # Source:
 #    https://github.com/ferthalangur/maria_db_backup
 # License: 
@@ -26,6 +26,11 @@ MARIABACKUP_PROG="${MARIABACKUP_PROG:-/bin/mariabackup}"
 MARIABACKUP_OPTIONS="${MARIABACKUP_OPTIONS:---binloginfo=AUTO}"
 MARIABACKUP_DEBUG="${MARIABACKUP_DEBUG:-0}"
 MARIABACKUP_BASEDIR="${MARIABACKUP_BASEDIR:-/usr/local/backup/mariabackup}"
+MARIABACKUP_COMPRESSION="${MARIABACKUP_COMPRESSION:-0}"
+MARIABACKUP_STORE_SSH="${MARIABACKUP_STORE_SSH:-0}"
+MARIABACKUP_STORE_SSH_BASEDIR="${MARIABACKUP_STORE_SSH_BASEDIR:-/usr/local/backup/mariabackup}"
+MARIABACKUP_STORE_SSH_HOST="${MARIABACKUP_STORE_SSH_HOST:-127.0.0.1}"
+MARIABACKUP_STORE_SSH_USER="${MARIABACKUP_STORE_SSH_USER:-root}"
 
 function run_backup ()
 {
@@ -34,16 +39,31 @@ function run_backup ()
 
     backup_cmd="${MARIABACKUP_PROG} --backup --target-dir ${targetdir} ${MARIABACKUP_OPTIONS}"
 
+    if [ "${MARIABACKUP_STORE_SSH}" -eq "1" -o "${MARIABACKUP_COMPRESSION}" != "0" ]
+    then
+        backup_cmd="${backup_cmd} --stream=xbstream"
+    fi
+
+    case "$MARIABACKUP_COMPRESSION" in
+        "gzip") backup_cmd="${backup_cmd} | gzip > ${MARIABACKUP_BASEDIR}/backup_database_${datestamp}_${timestamp}.gz"
+        ;;
+        "bzip2") backup_cmd="${backup_cmd} | bzip2 > ${MARIABACKUP_BASEDIR}/backup_database_${datestamp}_${timestamp}.tar.bz2"
+        ;;
+    esac
+
+    if [ "${MARIABACKUP_STORE_SSH}" -eq "1" ]
+    then
+        backup_cmd="${backup_cmd} | ssh ${MARIABACKUP_STORE_SSH_USER}@${MARIABACKUP_STORE_SSH_HOST} 'xbstream -x -C ${MARIABACKUP_STORE_SSH_BASEDIR}'"
+    fi
+
     mkdir -p "${targetdir}"
 
     if [ "${MARIABACKUP_DEBUG}" -eq "1" ]
     then
-	debug_dump "${backup_cmd}"
+        debug_dump "${backup_cmd}"
     fi
     
-    ${backup_cmd}
-
-    return 0
+    return ${backup_cmd}
 }
 
 function debug_dump ()
@@ -62,8 +82,7 @@ fi
 
 if [ ! -d "${MARIABACKUP_BASEDIR}" ]
 then
-    echo "Error: directory ${MARIABACKUP_BASEDIR}"
-    exit 1
+    mkdir -p "${MARIABACKUP_BASEDIR}"
 fi
 
 datestamp=$(date "+%Y%m%d")
@@ -75,7 +94,8 @@ for hour in ${MARIABACKUP_HOUR}
 do
     if [ "${hour}" -eq "${current_hour}" ]
     then
-	run_backup "${backup_dir}"
+	cmd="$(run_backup ${backup_dir})"
+    echo "$cmd"
 	exit
     fi
 done
