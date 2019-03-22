@@ -55,6 +55,10 @@ function run_backup ()
         filename="${filename}.bz2"
         backup_cmd="${backup_cmd} | bzip2 > ${MARIABACKUP_BASEDIR}/${filename}"
         ;;
+        "7z")
+        filename="${filename}.7z"
+        backup_cmd="${backup_cmd} | 7z a -si ${MARIABACKUP_BASEDIR}/${filename}"
+        ;;
     esac
 
     if [ "${MARIABACKUP_STORE_SSH}" -eq "1" ]

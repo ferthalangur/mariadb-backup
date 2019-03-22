@@ -15,7 +15,8 @@ MARIABACKUP_PROG="/bin/mariabackup"
 # Base directory where to put the backups
 MARIABACKUP_BASEDIR="/backups/databases"
 #
-# Compression method (gzip|bzip2)
+# Compression method (gzip|bzip2|7z)
+# to uncompress file use command 'gunzip -c backupstream.gz | mbstream -x' or 
 # MARIABACKUP_COMPRESSION="0"
 #
 # SSH store mode : to send backup into remote server
