@@ -64,7 +64,9 @@ function run_backup ()
         debug_dump "${backup_cmd}"
     fi
     
-    return ${backup_cmd}
+    eval ${backup_cmd}
+
+    return 0
 }
 
 function debug_dump ()
@@ -95,8 +97,7 @@ for hour in ${MARIABACKUP_HOUR}
 do
     if [ "${hour}" -eq "${current_hour}" ]
     then
-	cmd="$(run_backup ${backup_dir})"
-    echo "$cmd"
+	run_backup "${backup_dir}"
 	exit
     fi
 done
