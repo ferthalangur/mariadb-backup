@@ -39,7 +39,7 @@ function clean_backups()
 {
     if [ "${MARIABACKUP_CLEAN}" -eq "1" ]
     then
-        clean_cmd="find /var/log/arc/ -type f -mtime +${MARIABACKUP_CLEAN_DAYS} -exec rm -f {} +"
+        clean_cmd="find ${MARIABACKUP_BASEDIR} -type f -mtime +${MARIABACKUP_CLEAN_DAYS} -exec rm -f {} +"
 
         if [ "${MARIABACKUP_DEBUG}" -eq "1" ]
         then
