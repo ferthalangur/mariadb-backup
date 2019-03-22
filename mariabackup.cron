@@ -55,7 +55,7 @@ function run_backup ()
     local targetdir="$1"
     local backup_cmd
     local filename="backup_database_${datestamp}_${timestamp}"
-    local ssh_cmd="ssh ${MARIABACKUP_STORE_SSH_USER}@${MARIABACKUP_STORE_SSH_HOST} cat - > ${MARIABACKUP_STORE_SSH_BASEDIR}/${filename}"
+    local ssh_cmd="ssh ${MARIABACKUP_STORE_SSH_USER}@${MARIABACKUP_STORE_SSH_HOST} 'cat - > ${MARIABACKUP_STORE_SSH_BASEDIR}/${filename}"
 
     backup_cmd="${MARIABACKUP_PROG} --backup --target-dir ${targetdir} ${MARIABACKUP_OPTIONS}"
 
@@ -63,13 +63,16 @@ function run_backup ()
     then
         case "$MARIABACKUP_COMPRESSION" in
             "gzip")
-            backup_cmd="${backup_cmd} --stream=xbstream | gzip | ${ssh_cmd}.gz"
+            backup_cmd="${backup_cmd} --stream=xbstream | gzip | ${ssh_cmd}.gz'"
             ;;
             "bzip2")
-            backup_cmd="${backup_cmd} --stream=xbstream | bzip2 | ${ssh_cmd}.bz2"
+            backup_cmd="${backup_cmd} --stream=xbstream | bzip2 | ${ssh_cmd}.bz2'"
             ;;
             "7z")
-            backup_cmd="${backup_cmd} --stream=xbstream | 7z a -si | ${ssh_cmd}.7z"
+            backup_cmd="${backup_cmd} --stream=xbstream | 7z a -si | ${ssh_cmd}.7z'"
+            ;;
+            *)
+            backup_cmd="${backup_cmd} --stream=xbstream | ${ssh_cmd}'"
             ;;
         esac
     else
