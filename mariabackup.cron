@@ -54,7 +54,17 @@ function run_backup ()
 
     if [ "${MARIABACKUP_STORE_SSH}" -eq "1" ]
     then
-        backup_cmd="${backup_cmd} | ssh ${MARIABACKUP_STORE_SSH_USER}@${MARIABACKUP_STORE_SSH_HOST} -i ${MARIABACKUP_STORE_SSH_KEY} 'xbstream -x -C ${MARIABACKUP_STORE_SSH_BASEDIR}'"
+        if [ "${MARIABACKUP_COMPRESSION}" -eq "0" ]
+        then
+            backup_cmd="${backup_cmd} | ssh ${MARIABACKUP_STORE_SSH_USER}@${MARIABACKUP_STORE_SSH_HOST} -i ${MARIABACKUP_STORE_SSH_KEY} -C ${MARIABACKUP_STORE_SSH_BASEDIR}/"
+        else
+            case "$MARIABACKUP_COMPRESSION" in
+                "gzip") backup_cmd="${backup_cmd} | ssh ${MARIABACKUP_STORE_SSH_USER}@${MARIABACKUP_STORE_SSH_HOST} -i ${MARIABACKUP_STORE_SSH_KEY} 'cat - > ${MARIABACKUP_STORE_SSH_BASEDIR}/backup_database_${datestamp}_${timestamp}.gz'"
+                ;;
+                "bzip2") backup_cmd="${backup_cmd} | ssh ${MARIABACKUP_STORE_SSH_USER}@${MARIABACKUP_STORE_SSH_HOST} -i ${MARIABACKUP_STORE_SSH_KEY} 'cat - > ${MARIABACKUP_STORE_SSH_BASEDIR}/backup_database_${datestamp}_${timestamp}.tar.bz2'"
+                ;;
+            esac
+        fi
     fi
 
     mkdir -p "${targetdir}"
