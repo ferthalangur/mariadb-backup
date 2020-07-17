@@ -25,7 +25,8 @@ running the script or it will fail. I use
 change that in the configuration file.
 
 To follow or copy/paste my examples, set the environment variable
-$EDITOR to your favorite editor (e.g., export EDITOR='emacs -nw')
+$EDITOR to your favorite text editor (e.g., export EDITOR='emacs -nw')
+and then type in my example commands verbatim.
 
 
 ## Installation ##
@@ -146,7 +147,7 @@ v1.0.0 - 2018-04-06. Initial release.
     [ferthalangur](https://github.com/ferthalangur)
 
 ## License ##
-    Copyright (C) 2018 Robert Bryan Jenson  rbj(atsymbol)spotch.com
+    Copyright (C) 2018-2020 Robert Bryan Jenson  rbj(atsymbol)spotch.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
