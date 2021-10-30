@@ -8,7 +8,7 @@
 #   is worse for security than putting it in a file owned and readable
 #   only by the root user.
 # Version:
-#    1.0.1
+#    1.0.2
 # Source:
 #    https://github.com/ferthalangur/maria_db_backup
 # License: 
@@ -119,7 +119,7 @@ then
 fi
 
 ###########################################################################
-#   Copyright (C) 2018 Robert Bryan Jenson ... rbj.(at).spotch.com
+#   Copyright (C) 2021 Robert Bryan Jenson ... rbj.(at).spotch.com
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
